@@ -1,6 +1,6 @@
 # Services Status Notifier BitBar plugin
-A simple BitBar plugin for MacOS user which uses `say` command and
-to inform about unhealthy services based on provided [**statuspage.io**][2] ID's.
+A simple [**BitBar**][1] plugin which utilises `say` command to inform about
+unhealthy services based on specified [**statuspage.io**][2] ID's.
 
 setup
 -----
@@ -10,19 +10,22 @@ make install
 ```  
 
 Move the `services-status-notifier.1m.sh` script to your BitBar plugins directory.  
+Update `GOPATH` in the `services-status-notifier.1m.sh`.
 
 service checks
 ---------------------
 
-To update services checks, add [**statuspage.io**][2] service ID to main.go `services` and run `make install`.
+To update services checks, add [**statuspage.io**][2] service ID to main.go `services` slice and run `make install`.
 
 dependencies
 ------------
 * [**BitBar**][1]
 * [**statuspage.io**][2]
-* [**logrus**][3]
+* [**golang**][3]
 
+## License
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 
 [1]: https://getbitbar.com/
 [2]: https://www.statuspage.io/
-[3]: https://github.com/sirupsen/logrus
+[3]: https://golang.org/

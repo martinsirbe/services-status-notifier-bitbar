@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const url = "https://%s.statuspage.io/api/v2/status.json"
+const statuspageURL = "https://%s.statuspage.io/api/v2/status.json"
 
 // ServicesChecker defines services status checker functions
 type ServicesChecker interface {
@@ -49,10 +49,10 @@ func (c *Checker) Check() []*models.StatusPage {
 }
 
 func (c *Checker) checkStatus(statusPageID string) (*models.StatusPage, error) {
-	requestURL := fmt.Sprintf(url, statusPageID)
+	requestURL := fmt.Sprintf(statuspageURL, statusPageID)
 	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create http get request, url - %s", requestURL)
+		return nil, errors.Wrapf(err, "failed to create http get request, statuspageURL - %s", requestURL)
 	}
 
 	res, err := c.httpClient.Do(req)

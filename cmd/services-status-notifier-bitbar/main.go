@@ -9,6 +9,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const goodServiceStatus = "All Systems Operational"
+
 var services = []models.ServiceStatusPage{
 	{Name: "CircleCI", ID: "6w4r0ttlx5ft"},
 	{Name: "Trello", ID: "h5frqhb041yq"},
@@ -18,21 +20,50 @@ var services = []models.ServiceStatusPage{
 func main() {
 	servicesChecker := service.NewServicesChecker(services)
 
-	var isBadStatus bool
-	for _, r := range servicesChecker.Check() {
-		if r.Status.Description != "All Systems Operational" {
-			isBadStatus = true
-			cmd := exec.Command("say", fmt.Sprintf("%s reports %s", r.Page.Name, r.Status.Description))
+	services := servicesChecker.Check()
+
+	gotBadStatus := checkForBadStatus(services)
+	if gotBadStatus {
+		fmt.Println("🔥\n---")
+	} else {
+		fmt.Println("👌\n---")
+	}
+
+	for _, s := range services {
+		serviceStatus := s.Status.Description
+
+		if serviceStatus != goodServiceStatus {
+			cmd := exec.Command("say", fmt.Sprintf("%s reports %s", s.Page.Name, s.Status.Description))
 			if err := cmd.Run(); err != nil {
 				log.WithError(err).Error("failed execute say command")
 			}
 		}
-	}
 
-	if isBadStatus {
-		fmt.Println("🔥\n---")
-		return
+		fmt.Printf("%s | href=%s color=#ffffff size=13\n", s.Page.Name, s.Page.URL)
+		fmt.Printf("%s %s | color=%s size=9\n", getStatusSymbol(serviceStatus), serviceStatus, getStatusColor(serviceStatus))
+		fmt.Println("---")
 	}
+}
 
-	fmt.Println("👌\n---")
+func checkForBadStatus(statuses []*models.StatusPage) bool {
+	for _, s := range statuses {
+		if s.Status.Description != goodServiceStatus {
+			return true
+		}
+	}
+	return false
+}
+
+func getStatusSymbol(status string) string {
+	if status == goodServiceStatus {
+		return "👌"
+	}
+	return "🔥"
+}
+
+func getStatusColor(status string) string {
+	if status == goodServiceStatus {
+		return "#3fff00"
+	}
+	return "#ff2817"
 }
